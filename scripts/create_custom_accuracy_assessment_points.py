@@ -46,6 +46,8 @@ def create_acc_points(inputRaster,
     cov0 = count0 / (count0 + count1)
     cov1 = count1 / (count0 + count1)
 
+    arcpy.AddMessage(f"This raster is {cov0*100}% water and {cov1*100}% kelp")
+
     ## Calculate Π * (1-Π)
     pi_var = max([cov0, cov1]) * (1 - max([cov0, cov1]))
 
@@ -55,7 +57,7 @@ def create_acc_points(inputRaster,
     ## Calculate n
     n = B*pi_var/(((100-inputConfidenceInterval)/100) ** 2)
 
-    arcpy.AddMessage(f"Sample Points Required: {n}")
+    arcpy.AddMessage(f"Sample Points Required: {round(n)}")
 
     arcpy.AddMessage("Checking Spatial Analyst license availability...")
     try:
@@ -96,14 +98,13 @@ def create_acc_points(inputRaster,
 
     arcpy.AddMessage(f"Tool complete. Output points written to {outputPointFeatures}")
 
-if __name__ == "main":
-    # Inputs: raster, target field, confidence interval, min number of points per class 
-    inputRaster = arcpy.GetParameterAsText(0)
-    inputMinPointsPerClass = int(arcpy.GetParameterAsText(1))
-    inputConfidenceInterval = float(arcpy.GetParameterAsText(2))
+# Inputs: raster, target field, confidence interval, min number of points per class 
+inputRaster = arcpy.GetParameterAsText(0)
+inputMinPointsPerClass = int(arcpy.GetParameterAsText(1))
+inputConfidenceInterval = float(arcpy.GetParameterAsText(2))
 
-    # Output: the sample points
-    outputPointFeatures = arcpy.GetParameterAsText(3)
+# Output: the sample points
+outputPointFeatures = arcpy.GetParameterAsText(3)
 
-    create_acc_points(inputRaster=inputRaster, inputMinPointsPerClass=inputMinPointsPerClass,
-                      inputConfidenceInterval=inputConfidenceInterval, outputPointFeatures=outputPointFeatures)
+create_acc_points(inputRaster=inputRaster, inputMinPointsPerClass=inputMinPointsPerClass,
+                  inputConfidenceInterval=inputConfidenceInterval, outputPointFeatures=outputPointFeatures)

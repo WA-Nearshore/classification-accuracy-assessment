@@ -13,7 +13,7 @@ arcpy.env.overwriteOutput = True
 # Define main function
 def create_acc_points(inputRaster, 
                       inputMinPointsPerClass,
-                      inputConfidenceInterval, 
+                      inputConfidence, 
                       outputPointFeatures):
     # Calculate minimum points required to meet confidence interval 
     arcpy.AddMessage("Calculating minimum points required...")

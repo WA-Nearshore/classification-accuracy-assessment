@@ -1,0 +1,27 @@
+{
+    "id": "62D44270",
+    "path": "~/ArcGIS/Projects/KAMaccuracy/scripts/compute_fuzzy_error_matrix.R",
+    "project_path": "compute_fuzzy_error_matrix.R",
+    "type": "r_source",
+    "hash": "3305963610",
+    "contents": "",
+    "dirty": false,
+    "created": 1758740116508.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "6,25",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1759269327,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1759269327591,
+    "read_only": false,
+    "read_only_alternatives": []
+}

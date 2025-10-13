@@ -52,10 +52,10 @@ def create_acc_points(inputRaster,
     pi_var = max([cov0, cov1]) * (1 - max([cov0, cov1]))
 
     ## Calculate B 
-    B = chi2.isf(((1 - inputConfidenceInterval/100) / 2), 1)
+    B = chi2.isf(((1 - inputConfidence/100) / 2), 1)
 
     ## Calculate n
-    n = B*pi_var/(((100-inputConfidenceInterval)/100) ** 2)
+    n = B*pi_var/(((100-inputConfidence)/100) ** 2)
 
     arcpy.AddMessage(f"Sample Points Required: {round(n)}")
 
@@ -101,10 +101,10 @@ def create_acc_points(inputRaster,
 # Inputs: raster, target field, confidence interval, min number of points per class 
 inputRaster = arcpy.GetParameterAsText(0)
 inputMinPointsPerClass = int(arcpy.GetParameterAsText(1))
-inputConfidenceInterval = float(arcpy.GetParameterAsText(2))
+inputConfidence = float(arcpy.GetParameterAsText(2))
 
 # Output: the sample points
 outputPointFeatures = arcpy.GetParameterAsText(3)
 
 create_acc_points(inputRaster=inputRaster, inputMinPointsPerClass=inputMinPointsPerClass,
-                  inputConfidenceInterval=inputConfidenceInterval, outputPointFeatures=outputPointFeatures)
+                  inputConfidence=inputConfidence, outputPointFeatures=outputPointFeatures)

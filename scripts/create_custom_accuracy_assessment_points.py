@@ -46,7 +46,7 @@ def create_acc_points(inputRaster,
     cov0 = count0 / (count0 + count1)
     cov1 = count1 / (count0 + count1)
 
-    arcpy.AddMessage(f"This raster is {cov0*100}% water and {cov1*100}% kelp")
+    arcpy.AddMessage(f"This raster is {round(cov0*100)}% class0 and {round(cov1*100)}% class1")
 
     ## Calculate Π * (1-Π)
     pi_var = max([cov0, cov1]) * (1 - max([cov0, cov1]))

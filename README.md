@@ -7,7 +7,7 @@ This tool calculates the minimum number of accuracy assessment sample points req
 ### Min Number of Points
 The minimum number of points required (𝑛) is based on the user-specified confidence and the proportional coverage of the classes, using the equation derived from Congalton & Green 2019: 
 
-𝑛=𝐵∗Π(1−Π)/𝛽^2
+### 𝑛=𝐵∗Π(1−Π)/𝛽^2
 
 Where:
 - Π = proportion of coverage of class closest to 50%

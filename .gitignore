@@ -17,3 +17,5 @@
 /.Rproj.user
 /.RData
 /scripts/kam_acc_Rscripts
+/*.tfw
+/*.tif*

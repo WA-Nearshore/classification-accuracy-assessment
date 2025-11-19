@@ -59,7 +59,7 @@ def create_acc_points(inputRaster,
 
     arcpy.AddMessage(f"Sample Points Required: {round(n)}")
 
-    arcpy.AddMessage("Checking Spatial Analyst license availability...")
+    arcpy.AddMessage("Checking out Spatial Analyst license extension...")
     try:
         if arcpy.CheckExtension("Spatial") == "Available":
             arcpy.CheckOutExtension("Spatial")
@@ -67,7 +67,7 @@ def create_acc_points(inputRaster,
             raise LicenseError
 
     except LicenseError:
-        arcpy.AddMessage("3D Analyst license is unavailable")
+        arcpy.AddMessage("Spatial Analyst license is unavailable")
     except arcpy.ExecuteError:
         arcpy.AddMessage(arcpy.GetMessages(2))
 

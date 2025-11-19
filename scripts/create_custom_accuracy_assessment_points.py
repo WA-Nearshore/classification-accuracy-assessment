@@ -105,7 +105,15 @@ def create_acc_points(inputRaster,
     arcpy.management.Delete("memory\points1")
     arcpy.management.Delete("memory\points2")
 
-    # Add a field for random order 
+    # Add a field to randomize
+    arcpy.management.AddField(outputPointFeatures, "RandomOrder", "SHORT")
+    arcpy.management.CalculateField(in_table=outputPointFeatures, field="RandomOrder", 
+                                    expression=f"random.randint({1}, {n})",
+                                    expression_type="PYTHON3", 
+                                    code_block="import random")
+    
+    # Return the Spatial Analyst license
+    arcpy.CheckInExtension("Spatial")
 
     arcpy.AddMessage(f"Tool complete. Output points written to {outputPointFeatures}")
 

@@ -74,6 +74,7 @@ def create_acc_points(inputRaster,
     # Create accuracy assessment points for MinPoints
     arcpy.AddMessage("Creating Accuracy Assessment Points...")
     if inputMinPointsPerClass > 0:
+        # distribute the minimum points for each class equally in each class
         arcpy.sa.CreateAccuracyAssessmentPoints(in_class_data=inputRaster,
                                                 out_points="memory\points1",
                                                 target_field="CLASSIFIED",
@@ -85,7 +86,7 @@ def create_acc_points(inputRaster,
                                             out_points="memory\points2",
                                             target_field="CLASSIFIED",
                                             num_random_points=(round(n-(2*inputMinPointsPerClass))),
-                                            sampling="EQUALIZED_STRATIFIED_RANDOM")
+                                            sampling="STRATIFIED_RANDOM")
 
     # Merge the classes and write output
     arcpy.management.Merge(
@@ -93,8 +94,18 @@ def create_acc_points(inputRaster,
         outputPointFeatures
     )
 
+    # Add a field to randomize
+    arcpy.management.AddField(outputPointFeatures, "RandomOrder", "SHORT")
+    arcpy.management.CalculateField(in_table=outputPointFeatures, field="RandomOrder", 
+                                    expression=f"random.randint({1}, {n})",
+                                    expression_type="PYTHON3", 
+                                    code_block="import random")
+
+    # Clear the in memory features
     arcpy.management.Delete("memory\points1")
     arcpy.management.Delete("memory\points2")
+
+    # Add a field for random order 
 
     arcpy.AddMessage(f"Tool complete. Output points written to {outputPointFeatures}")
 

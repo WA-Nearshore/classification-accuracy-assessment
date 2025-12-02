@@ -14,7 +14,8 @@ arcpy.env.overwriteOutput = True
 def create_acc_points(inputRaster, 
                       inputMinPointsPerClass,
                       inputConfidence, 
-                      outputPointFeatures):
+                      outputPointFeatures, 
+                      method):
     # Calculate minimum points required to meet confidence interval 
     arcpy.AddMessage("Calculating minimum points required...")
     count0 = 0
@@ -55,10 +56,16 @@ def create_acc_points(inputRaster,
     B = chi2.isf(((1 - inputConfidence/100) / 2), 1)
 
     ## Calculate n
-    n = B*pi_var/(((100-inputConfidence)/100) ** 2)
+    n = round(B*pi_var/(((100-inputConfidence)/100) ** 2))
 
-    arcpy.AddMessage(f"Sample Points Required: {round(n)}")
+    arcpy.AddMessage(f"Sample Points Required: {n}")
 
+    # Handle instances where min points per class * 2 is less than the total minimum of points required 
+    if inputMinPointsPerClass * 2 >= n and method == 'Subtract':
+        arcpy.AddError(f"Your minimum number of points per class ({inputMinPointsPerClass}) * 2 exceeds the total number of sample points required ({n}). Please select the Add method")
+        raise arcpy.ExecuteError
+
+    # Check out SA for create accuracy assessment points tool
     arcpy.AddMessage("Checking out Spatial Analyst license extension...")
     try:
         if arcpy.CheckExtension("Spatial") == "Available":
@@ -80,13 +87,25 @@ def create_acc_points(inputRaster,
                                                 target_field="CLASSIFIED",
                                                 num_random_points=(inputMinPointsPerClass*2),
                                                 sampling="EQUALIZED_STRATIFIED_RANDOM")
+        arcpy.AddMessage(f"Distributed {inputMinPointsPerClass} sample points in each class ({inputMinPointsPerClass*2} total)")
 
-    # Create accuracy assessment points by proportionally distributing the rest
-    arcpy.sa.CreateAccuracyAssessmentPoints(in_class_data=inputRaster,
-                                            out_points="memory\points2",
-                                            target_field="CLASSIFIED",
-                                            num_random_points=(round(n-(2*inputMinPointsPerClass))),
-                                            sampling="STRATIFIED_RANDOM")
+    # Create additional accuracy assessment points, either by proportionally distributing n points
+    if method == 'Add':
+        arcpy.sa.CreateAccuracyAssessmentPoints(in_class_data=inputRaster,
+                                                out_points="memory\points2",
+                                                target_field="CLASSIFIED",
+                                                num_random_points=n,
+                                                sampling="STRATIFIED_RANDOM")
+        arcpy.AddMessage(f"Distributed {n} sample points in each class; output will have {n+2*inputMinPointsPerClass} total sample points")
+    
+    # Or by proportionally distributing n - 2*min points per class. This is the default.
+    else:
+        arcpy.sa.CreateAccuracyAssessmentPoints(in_class_data=inputRaster,
+                                                out_points="memory\points2",
+                                                target_field="CLASSIFIED",
+                                                num_random_points=((n-(2*inputMinPointsPerClass))),
+                                                sampling="STRATIFIED_RANDOM")
+        arcpy.AddMessage(f"Distributed remaining {(n-(2*inputMinPointsPerClass))} sample points in each class")
 
     # Merge the classes and write output
     arcpy.management.Merge(
@@ -115,8 +134,11 @@ inputRaster = arcpy.GetParameterAsText(0)
 inputMinPointsPerClass = int(arcpy.GetParameterAsText(1))
 inputConfidence = float(arcpy.GetParameterAsText(2))
 
+# Option: either subtract the minimum number of points per class from the total min points or add the min points per class to total min points
+method = arcpy.GetParameterAsText(3)
+
 # Output: the sample points
-outputPointFeatures = arcpy.GetParameterAsText(3)
+outputPointFeatures = arcpy.GetParameterAsText(4)
 
 create_acc_points(inputRaster=inputRaster, inputMinPointsPerClass=inputMinPointsPerClass,
-                  inputConfidence=inputConfidence, outputPointFeatures=outputPointFeatures)
+                  inputConfidence=inputConfidence, outputPointFeatures=outputPointFeatures, method=method)

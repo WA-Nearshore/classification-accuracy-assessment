@@ -5,7 +5,7 @@
 This tool calculates the minimum number of accuracy assessment sample points required to meet the user-specified confidence (95% recommended), based on the equation described in Congalton & Green 2019. It is for **binary** (2-class) classification products ONLY. Optionally, the user can specify a minimum number of points per class (50 recommended). These points will be distributed using an equal stratified random approach, and the remaining points will be distributed proportionally according to class cover using a stratified random approach. This points distribution method is appropriate when the producer is primarily interested in the lowest cover class. This was designed for accuracy assessments of floating kelp classification products. **Spatial Analyst license extension required.**
 
 ### How to Use this Tool
-Download the .atbx file from this repository and add it to your Pro project by right-clicking Toolboxes in your Catalog pane, selecting Add New Toolbox, and navigate to wherever you saved the .atbx file. Once you add it to your project, you can open it, right click on the script tool, and click "Open."
+Download the zipped .atbx file from this repository, extract the zip file, and add it to your Pro project by right-clicking Toolboxes in your Catalog pane, selecting Add New Toolbox, and navigate to wherever you saved the .atbx file. Once you add it to your project, you can open it, right click on the script tool, and click "Open."
 
 ### Min Number of Points
 The minimum number of points required (𝑛) is based on the user-specified confidence and the proportional coverage of the classes, using the equation derived from Congalton & Green 2019: 
@@ -19,5 +19,12 @@ Where:
     - 𝛼 is the confidence expressed as a proportion (e.g. 0.95 for 95)
     - 𝑘 is the number of classes (always 2 in this case)
 - 𝛽 = the margin of error (precision), calculated here as (100-confidence)/100 
+
+### Point Combination Method
+This option allows the user to specify whether the user-specified minimum number of sample points per class distributed equally should be subtracted from or added to the total minimum number of sample points.
+
+**Subtract**: This method equally distributes the user-specified minimum points per class, then proportionally distributes the remaining points (𝑛 - 2 * user-specified points per class). The output will have the minimum number of sample points (𝑛). This is the default.
+
+**Add**: This method equally distributes the user-specified minimum points per class, then proportionally distributes (𝑛) additional sample points. The output will have (𝑛 + 2 * user-specified points per class).
 
 For more info, see Congalton, R. G., & Green, K. (2019). Assessing the Accuracy of Remotely Sensed Data: Principles and Practices. CRC Press.
